@@ -19,6 +19,18 @@ import android.widget.Toast;
 
 public class TrackingIdDialogFragment extends DialogFragment {
 
+    public interface OnDataPass {
+        public void onDataPass(String data);
+    }
+    OnDataPass dataPasser;
+
+    @Override
+    public void onAttach(Activity a) {
+        super.onAttach(a);
+        dataPasser = (OnDataPass) a;
+    }
+
+
     EditText et_tracingId;
     String trackingId;
     Button btn_locate;
@@ -67,7 +79,9 @@ public class TrackingIdDialogFragment extends DialogFragment {
                     }
                     else{
                         Toast.makeText(getContext(),"Locating", Toast.LENGTH_SHORT).show();
+                        dataPasser.onDataPass(trackingId);
                         wantToCloseDialog = true;
+
                     }
 
                     if(wantToCloseDialog)
