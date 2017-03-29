@@ -5,7 +5,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,13 +20,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TrackingIdDialogFragment.OnDataPass {
 
     private GoogleMap mMap;
     private double latitude,longitude;
     private long time;
     private LatLng currentLocation;
     private Marker mCurrentMarker;
+    private String trackingId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,5 +67,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mCurrentMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(currentLocation, 15);
         mMap.animateCamera(update);
+    }
+
+    @Override
+    public void onDataPass(String data) {
+        trackingId = data;
     }
 }
