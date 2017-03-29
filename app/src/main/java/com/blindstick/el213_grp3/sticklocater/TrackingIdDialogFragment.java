@@ -43,6 +43,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
                 getActivity().getLayoutInflater().inflate(
                         R.layout.fragment_tracking_id, null);
         builder.setView(trackingIdDialogView);
+        setCancelable(false);
         et_tracingId = (EditText)trackingIdDialogView.findViewById(R.id.et_trackingId);
 
         builder.setTitle("Enter Tracking ID:");
