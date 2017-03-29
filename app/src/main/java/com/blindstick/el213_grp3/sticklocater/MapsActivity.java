@@ -5,6 +5,11 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -28,7 +33,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng currentLocation;
     private Marker mCurrentMarker;
     private String trackingId;
-
+    Button btn_trackAnotherStick;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,22 +44,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
         trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
+
+        btn_trackAnotherStick = (Button) findViewById(R.id.btn_trackAnotherStick);
+
+        btn_trackAnotherStick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btn_trackAnotherStick.setVisibility(View.INVISIBLE);
+                TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
+                trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
+            }
+        });
+
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
     }
 
     public void showLocationMarkerOnMap() {
@@ -73,4 +79,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onDataPass(String data) {
         trackingId = data;
     }
+
 }

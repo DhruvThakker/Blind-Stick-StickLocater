@@ -5,4 +5,20 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.blindstick.el213_grp3.sticklocater.MapsActivity" />
+    tools:context="com.blindstick.el213_grp3.sticklocater.MapsActivity">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:text="Track Another Stick"
+        android:textColor="#FFFFFF"
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        android:paddingRight="10dp"
+        android:id="@+id/btn_trackAnotherStick"
+        android:background="#000000"
+        android:alpha="0.6"
+        android:visibility="invisible"/>
+
+    </fragment>
+

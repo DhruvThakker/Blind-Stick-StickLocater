@@ -34,6 +34,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
     EditText et_tracingId;
     String trackingId;
     Button btn_locate;
+    Button btn_trackingAnotherStick;
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
 
@@ -64,6 +65,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
     {
         super.onStart();
         AlertDialog d = (AlertDialog)getDialog();
+        btn_trackingAnotherStick = (Button)getActivity().findViewById(R.id.btn_trackAnotherStick);
         if(d != null)
         {
             Button positiveButton = (Button) d.getButton(Dialog.BUTTON_POSITIVE);
@@ -74,13 +76,14 @@ public class TrackingIdDialogFragment extends DialogFragment {
                 {
                     Boolean wantToCloseDialog = false;
                     trackingId = et_tracingId.getText().toString();
-                    if(!trackingId.matches("^[A-Za-z][A-Za-z0-9]*[0-9]$")){
+                    if(!trackingId.matches("^[A-Za-z][A-Za-z]*[0-9]*[0-9]$")){
                         Toast.makeText(getContext(),"Please Enter Valid Tracking Id", Toast.LENGTH_SHORT).show();
                         et_tracingId.setText("");
                     }
                     else{
                         Toast.makeText(getContext(),"Locating", Toast.LENGTH_SHORT).show();
                         dataPasser.onDataPass(trackingId);
+                        btn_trackingAnotherStick.setVisibility(View.VISIBLE);
                         wantToCloseDialog = true;
 
                     }
