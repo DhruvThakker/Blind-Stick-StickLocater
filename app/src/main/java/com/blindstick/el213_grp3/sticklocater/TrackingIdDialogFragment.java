@@ -61,7 +61,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
                 {
                     Boolean wantToCloseDialog = false;
                     trackingId = et_tracingId.getText().toString();
-                    if(!trackingId.matches("[A-Za-z0-9]+")){
+                    if(!trackingId.matches("^[A-Za-z][A-Za-z0-9]*[0-9]$")){
                         Toast.makeText(getContext(),"Please Enter Valid Tracking Id", Toast.LENGTH_SHORT).show();
                         et_tracingId.setText("");
                     }
