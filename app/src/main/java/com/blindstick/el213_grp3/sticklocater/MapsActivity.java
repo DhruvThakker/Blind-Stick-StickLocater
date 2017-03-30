@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +31,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TrackingIdDialogFragment.OnDataPass {
 
@@ -91,5 +95,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     public void getLocation(){
         Toast.makeText(this,"got the tracking id"+trackingId,Toast.LENGTH_LONG).show();
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        user = firebaseDatabase.getReference(trackingId);
+
+        user.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,Object> map = (HashMap)dataSnapshot.getValue();
+                latitude = (Double)map.get("Latitude");
+                longitude = (Double)map.get("Longitude");
+                time = (Long) map.get("Time");
+                showLocationMarkerOnMap();
+                Toast.makeText(MapsActivity.this,"Hello from jay!",Toast.LENGTH_SHORT);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
