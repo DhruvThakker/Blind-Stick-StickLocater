@@ -3,29 +3,19 @@ package com.blindstick.el213_grp3.sticklocater;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.onurciner.toastox.ToastOX;
-
 import dmax.dialog.SpotsDialog;
 
 public class TrackingIdDialogFragment extends DialogFragment {
@@ -45,10 +35,8 @@ public class TrackingIdDialogFragment extends DialogFragment {
     String trackingId;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root;
-    //ProgressDialog progressDialog;
     private AlertDialog progressDialog;
     Context context;
-    Button btn_locate;
     Button btn_trackingAnotherStick;
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
@@ -62,9 +50,6 @@ public class TrackingIdDialogFragment extends DialogFragment {
         setCancelable(false);
         et_tracingId = (EditText)trackingIdDialogView.findViewById(R.id.et_trackingId);
 
-        //progressDialog=new ProgressDialog(getActivity());
-        //progressDialog.setMessage("Please Wait..." +
-         //       "\nChecking Tracking ID");
         progressDialog = new SpotsDialog(getContext(), R.style.Custom);
         builder.setTitle("Enter Tracking ID:");
 
@@ -92,7 +77,6 @@ public class TrackingIdDialogFragment extends DialogFragment {
                 public void onClick(View v) {
                     trackingId = et_tracingId.getText().toString();
                     if (!trackingId.matches("^[A-Za-z][A-Za-z0-9]*[0-9]$")) {
-                        //Toast.makeText(context, "Please Enter Valid Tracking ID", Toast.LENGTH_SHORT).show();
                         ToastOX.error(getContext(), "Please Enter Valid Tracking ID");
                         et_tracingId.setText("");
                     } else {
@@ -119,7 +103,6 @@ public class TrackingIdDialogFragment extends DialogFragment {
 
                             }
                         });
-                        //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.
                     }
                 }
             });

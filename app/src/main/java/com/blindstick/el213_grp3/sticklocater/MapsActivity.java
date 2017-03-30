@@ -1,22 +1,12 @@
 package com.blindstick.el213_grp3.sticklocater;
 
-import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,12 +37,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng currentLocation;
     private Marker mCurrentMarker;
     private String trackingId=null;
-    //ProgressDialog progressDialog;
     private AlertDialog progressDialog;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference root,user;
-    Boolean proceed;
+    DatabaseReference user;
     Button btn_trackAnotherStick;
+    private static int INTERVAL = 1000*60;
+    Handler mHandler;
+    Runnable mHandlerTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +53,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        //progressDialog=new ProgressDialog(this);
-        //progressDialog.setMessage("Getting Location");
         progressDialog = new SpotsDialog(this, R.style.Custom2);
         TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
         trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
@@ -78,6 +68,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        mHandler = new Handler();
+
+        mHandlerTask = new Runnable() {
+            @Override
+            public void run() {
+                setTitle();
+                mHandler.postDelayed(mHandlerTask,INTERVAL);
+            }
+        };
+
     }
 
     @Override
@@ -90,7 +90,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(mCurrentMarker!=null) {
             mCurrentMarker.remove();
         }
-        mCurrentMarker = mMap.addMarker(new MarkerOptions().position(currentLocation).title("Updated " + ((new Date().getTime() - time)/(1000*60)) + " minutes ago."));
+        INTERVAL = 1000*60;
+        mCurrentMarker = mMap.addMarker(new MarkerOptions().position(currentLocation));
+        mHandlerTask.run();
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         Date date = calendar.getTime();
@@ -100,7 +102,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(update);
     }
 
-
+    public void setTitle() {
+        long timeDiff = (new Date().getTime() - time)/(1000*60);
+        String unit = "minutes";
+        if(timeDiff>=60) {
+            timeDiff = timeDiff/60;
+            unit = "hours";
+            INTERVAL = INTERVAL * 60;
+            if(timeDiff>=24) {
+                timeDiff = timeDiff/24;
+                unit = "days";
+                INTERVAL = INTERVAL * 24;
+                if(timeDiff>=30) {
+                    long temp = timeDiff;
+                    timeDiff = timeDiff/30;
+                    unit = "months";
+                    INTERVAL = INTERVAL * 30;
+                    if(temp>=365) {
+                        timeDiff = temp/365;
+                        unit = "years";
+                        INTERVAL = INTERVAL * 365;
+                    }
+                }
+            }
+        }
+        mCurrentMarker.setTitle("Updated " + timeDiff + " " + unit + " ago.");
+    }
 
     @Override
     public void onDataPass(String data) {
@@ -132,15 +159,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    /*@Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        TrackingIdDialogFragment dialog = (TrackingIdDialogFragment)getSupportFragmentManager().findFragmentByTag("trac0king id dialog");
-        dialog.setCancelable(true);
-        Toast.makeText(this,"On back Pressed", Toast.LENGTH_SHORT).show();
-        if(trackingId==null)
-            finish();
-        else
-            getSupportFragmentManager().beginTransaction().remove(dialog).commit();
-    }*/
 }
