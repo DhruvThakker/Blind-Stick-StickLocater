@@ -24,6 +24,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.onurciner.toastox.ToastOX;
+
+import dmax.dialog.SpotsDialog;
 
 public class TrackingIdDialogFragment extends DialogFragment {
 
@@ -38,12 +41,12 @@ public class TrackingIdDialogFragment extends DialogFragment {
         dataPasser = (OnDataPass) a;
     }
 
-
     EditText et_tracingId;
     String trackingId;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root;
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
+    private AlertDialog progressDialog;
     Context context;
     Button btn_locate;
     Button btn_trackingAnotherStick;
@@ -59,9 +62,10 @@ public class TrackingIdDialogFragment extends DialogFragment {
         setCancelable(false);
         et_tracingId = (EditText)trackingIdDialogView.findViewById(R.id.et_trackingId);
 
-        progressDialog=new ProgressDialog(getActivity());
-        progressDialog.setMessage("Please Wait..." +
-                "\nChecking Tracking ID");
+        //progressDialog=new ProgressDialog(getActivity());
+        //progressDialog.setMessage("Please Wait..." +
+         //       "\nChecking Tracking ID");
+        progressDialog = new SpotsDialog(getContext(), R.style.Custom);
         builder.setTitle("Enter Tracking ID:");
 
         builder.setPositiveButton("Locate",
@@ -88,7 +92,8 @@ public class TrackingIdDialogFragment extends DialogFragment {
                 public void onClick(View v) {
                     trackingId = et_tracingId.getText().toString();
                     if (!trackingId.matches("^[A-Za-z][A-Za-z0-9]*[0-9]$")) {
-                        Toast.makeText(context, "Please Enter Valid Tracking ID", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "Please Enter Valid Tracking ID", Toast.LENGTH_SHORT).show();
+                        ToastOX.error(getContext(), "Please Enter Valid Tracking ID");
                         et_tracingId.setText("");
                     } else {
                         progressDialog.show();
@@ -103,7 +108,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
                                     dataPasser.onDataPass(trackingId);
                                     dismiss();
                                 } else {
-                                    Toast.makeText(context, "User does not exist", Toast.LENGTH_LONG).show();
+                                    ToastOX.error(getContext(), "User Not Found");
                                     progressDialog.dismiss();
                                     et_tracingId.setText("");
                                 }
@@ -125,6 +130,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
         super.onDetach();
         ((MapsActivity)getActivity()).getLocation();
     }
+
 }
 
 

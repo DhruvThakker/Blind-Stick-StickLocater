@@ -1,9 +1,11 @@
 package com.blindstick.el213_grp3.sticklocater;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,10 +31,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.onurciner.toastox.ToastOX;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+
+import dmax.dialog.SpotsDialog;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TrackingIdDialogFragment.OnDataPass {
 
@@ -42,7 +47,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng currentLocation;
     private Marker mCurrentMarker;
     private String trackingId=null;
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
+    private AlertDialog progressDialog;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root,user;
     Boolean proceed;
@@ -55,8 +61,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("Getting Location");
+        //progressDialog=new ProgressDialog(this);
+        //progressDialog.setMessage("Getting Location");
+        progressDialog = new SpotsDialog(this, R.style.Custom2);
         TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
         trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
 
@@ -113,7 +120,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longitude = (Double)map.get("Longitude");
                 time = (Long) map.get("Time");
                 progressDialog.dismiss();
-                Toast.makeText(MapsActivity.this, "Locating...", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
+                ToastOX.info(getApplicationContext(), "Locating...");
                 showLocationMarkerOnMap();
             }
 
@@ -123,4 +131,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+
+    /*@Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        TrackingIdDialogFragment dialog = (TrackingIdDialogFragment)getSupportFragmentManager().findFragmentByTag("trac0king id dialog");
+        dialog.setCancelable(true);
+        Toast.makeText(this,"On back Pressed", Toast.LENGTH_SHORT).show();
+        if(trackingId==null)
+            finish();
+        else
+            getSupportFragmentManager().beginTransaction().remove(dialog).commit();
+    }*/
 }
