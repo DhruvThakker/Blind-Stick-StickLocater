@@ -80,6 +80,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void showLocationMarkerOnMap() {
         currentLocation = new LatLng(latitude,longitude);
+        if(mCurrentMarker!=null) {
+            mCurrentMarker.remove();
+        }
         mCurrentMarker = mMap.addMarker(new MarkerOptions().position(currentLocation).title("Updated " + ((new Date().getTime() - time)/(1000*60)) + " minutes ago."));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
@@ -98,7 +101,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     public void getLocation(){
         progressDialog.show();
-        Toast.makeText(this,"got the tracking id"+trackingId,Toast.LENGTH_LONG).show();
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         user = firebaseDatabase.getReference(trackingId);
@@ -111,7 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longitude = (Double)map.get("Longitude");
                 time = (Long) map.get("Time");
                 progressDialog.dismiss();
-                Toast.makeText(MapsActivity.this,"Hello from jay!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, "Locating...", Toast.LENGTH_SHORT).show();
                 showLocationMarkerOnMap();
             }
 

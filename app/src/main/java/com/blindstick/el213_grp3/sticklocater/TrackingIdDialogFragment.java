@@ -88,7 +88,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
                 public void onClick(View v) {
                     trackingId = et_tracingId.getText().toString();
                     if (!trackingId.matches("^[A-Za-z][A-Za-z0-9]*[0-9]$")) {
-                        Toast.makeText(context, "Please Enter Valid Tracking Id", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Please Enter Valid Tracking ID", Toast.LENGTH_SHORT).show();
                         et_tracingId.setText("");
                     } else {
                         progressDialog.show();
@@ -99,12 +99,11 @@ public class TrackingIdDialogFragment extends DialogFragment {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.hasChild(trackingId)) {
                                     progressDialog.dismiss();
-                                    Toast.makeText(context, "Locating...", Toast.LENGTH_LONG).show();
                                     btn_trackingAnotherStick.setVisibility(View.VISIBLE);
                                     dataPasser.onDataPass(trackingId);
                                     dismiss();
                                 } else {
-                                    Toast.makeText(context, "user doesn't exist", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, "User does not exist", Toast.LENGTH_LONG).show();
                                     progressDialog.dismiss();
                                     et_tracingId.setText("");
                                 }
