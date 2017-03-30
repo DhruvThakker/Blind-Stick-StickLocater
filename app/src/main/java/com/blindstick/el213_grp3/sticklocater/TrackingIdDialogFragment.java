@@ -3,6 +3,7 @@ package com.blindstick.el213_grp3.sticklocater;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,10 +18,16 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class TrackingIdDialogFragment extends DialogFragment {
 
     public interface OnDataPass {
-        public void onDataPass(String data);
+        public void onDataPass(String data,boolean proceed);
     }
     OnDataPass dataPasser;
 
@@ -33,7 +40,10 @@ public class TrackingIdDialogFragment extends DialogFragment {
 
     EditText et_tracingId;
     String trackingId;
-    Button btn_locate;
+    Button btn_locate; FirebaseDatabase firebaseDatabase;
+    DatabaseReference root,user;
+    Context context;
+    Boolean wantToCloseDialog;
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
 
@@ -56,7 +66,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
                     }
                 }
         );
-
+        context=getContext();
         return builder.create();
     }
     @Override
@@ -72,16 +82,33 @@ public class TrackingIdDialogFragment extends DialogFragment {
                 @Override
                 public void onClick(View v)
                 {
-                    Boolean wantToCloseDialog = false;
+                   wantToCloseDialog = false;
                     trackingId = et_tracingId.getText().toString();
                     if(!trackingId.matches("^[A-Za-z][A-Za-z0-9]*[0-9]$")){
-                        Toast.makeText(getContext(),"Please Enter Valid Tracking Id", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,"Please Enter Valid Tracking Id", Toast.LENGTH_SHORT).show();
                         et_tracingId.setText("");
                     }
                     else{
-                        Toast.makeText(getContext(),"Locating", Toast.LENGTH_SHORT).show();
-                        dataPasser.onDataPass(trackingId);
-                        wantToCloseDialog = true;
+                        Toast.makeText(context,"Locating", Toast.LENGTH_SHORT).show();
+                        firebaseDatabase= FirebaseDatabase.getInstance();
+                        root=firebaseDatabase.getReference();
+                        root.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.hasChild(trackingId)){
+                                    Toast.makeText(context,"Locating...",Toast.LENGTH_LONG).show();
+                                    setvalue(true);
+                                }
+                                else  {Toast.makeText(context,"user doesn't exist",Toast.LENGTH_LONG).show();
+                                et_tracingId.setText("");}
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                        dataPasser.onDataPass(trackingId,wantToCloseDialog);
 
                     }
 
@@ -92,7 +119,9 @@ public class TrackingIdDialogFragment extends DialogFragment {
             });
         }
     }
-
+    public void setvalue(Boolean b){
+        wantToCloseDialog=b;
+    }
 
 }
 

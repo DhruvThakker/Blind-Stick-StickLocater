@@ -16,6 +16,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,8 +32,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private long time;
     private LatLng currentLocation;
     private Marker mCurrentMarker;
-    private String trackingId;
-
+    private String trackingId=null;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference root,user;
+    Boolean proceed;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +76,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(update);
     }
 
+
+
     @Override
-    public void onDataPass(String data) {
-        trackingId = data;
+    public void onDataPass(String data, boolean p) {
+      trackingId=data;
+        proceed=p;
     }
 }
