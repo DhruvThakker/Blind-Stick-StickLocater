@@ -37,15 +37,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private long time;
     private LatLng currentLocation;
     private Marker mCurrentMarker;
-<<<<<<< HEAD
     private String trackingId=null;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root,user;
     Boolean proceed;
-=======
-    private String trackingId;
     Button btn_trackAnotherStick;
->>>>>>> origin/master
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,9 +86,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     @Override
-    public void onDataPass(String data, boolean p) {
+    public void onDataPass(String data) {
       trackingId=data;
-        proceed=p;
     }
-
+    public void getLocation(){
+        Toast.makeText(this,"got the tracking id"+trackingId,Toast.LENGTH_LONG).show();
+    }
 }
