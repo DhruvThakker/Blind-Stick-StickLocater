@@ -1,6 +1,7 @@
 package com.blindstick.el213_grp3.sticklocater;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -32,7 +33,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TreeMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TrackingIdDialogFragment.OnDataPass {
 
@@ -42,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng currentLocation;
     private Marker mCurrentMarker;
     private String trackingId=null;
+    ProgressDialog progressDialog;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root,user;
     Boolean proceed;
@@ -54,6 +55,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("Getting Location");
         TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
         trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
 
@@ -94,20 +97,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
       trackingId=data;
     }
     public void getLocation(){
+        progressDialog.show();
         Toast.makeText(this,"got the tracking id"+trackingId,Toast.LENGTH_LONG).show();
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         user = firebaseDatabase.getReference(trackingId);
 
-        user.addListenerForSingleValueEvent(new ValueEventListener() {
+        user.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 HashMap<String,Object> map = (HashMap)dataSnapshot.getValue();
                 latitude = (Double)map.get("Latitude");
                 longitude = (Double)map.get("Longitude");
                 time = (Long) map.get("Time");
+                progressDialog.dismiss();
+                Toast.makeText(MapsActivity.this,"Hello from jay!",Toast.LENGTH_SHORT).show();
                 showLocationMarkerOnMap();
-                Toast.makeText(MapsActivity.this,"Hello from jay!",Toast.LENGTH_SHORT);
             }
 
             @Override

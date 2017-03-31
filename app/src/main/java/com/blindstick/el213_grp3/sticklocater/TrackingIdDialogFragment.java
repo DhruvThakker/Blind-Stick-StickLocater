@@ -3,6 +3,7 @@ package com.blindstick.el213_grp3.sticklocater;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -42,6 +43,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
     String trackingId;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root;
+    ProgressDialog progressDialog;
     Context context;
     Button btn_locate;
     Button btn_trackingAnotherStick;
@@ -57,6 +59,9 @@ public class TrackingIdDialogFragment extends DialogFragment {
         setCancelable(false);
         et_tracingId = (EditText)trackingIdDialogView.findViewById(R.id.et_trackingId);
 
+        progressDialog=new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait..." +
+                "\nChecking Tracking ID");
         builder.setTitle("Enter Tracking ID:");
 
         builder.setPositiveButton("Locate",
@@ -86,18 +91,21 @@ public class TrackingIdDialogFragment extends DialogFragment {
                         Toast.makeText(context, "Please Enter Valid Tracking Id", Toast.LENGTH_SHORT).show();
                         et_tracingId.setText("");
                     } else {
+                        progressDialog.show();
                         firebaseDatabase = FirebaseDatabase.getInstance();
                         root = firebaseDatabase.getReference();
                         root.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.hasChild(trackingId)) {
+                                    progressDialog.dismiss();
                                     Toast.makeText(context, "Locating...", Toast.LENGTH_LONG).show();
                                     btn_trackingAnotherStick.setVisibility(View.VISIBLE);
                                     dataPasser.onDataPass(trackingId);
                                     dismiss();
                                 } else {
                                     Toast.makeText(context, "user doesn't exist", Toast.LENGTH_LONG).show();
+                                    progressDialog.dismiss();
                                     et_tracingId.setText("");
                                 }
                             }
