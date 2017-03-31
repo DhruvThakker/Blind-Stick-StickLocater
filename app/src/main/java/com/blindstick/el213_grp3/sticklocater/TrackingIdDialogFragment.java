@@ -41,7 +41,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
     EditText et_tracingId;
     String trackingId;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference root,user;
+    DatabaseReference root;
     Context context;
     Button btn_locate;
     Button btn_trackingAnotherStick;
