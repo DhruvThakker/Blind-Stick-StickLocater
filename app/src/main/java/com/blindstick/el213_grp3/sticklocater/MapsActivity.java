@@ -32,22 +32,20 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TrackingIdDialogFragment.OnDataPass {
 
     private GoogleMap mMap;
-    private double latitude, longitude;
+    private double latitude,longitude;
     private long time;
     private LatLng currentLocation;
     private Marker mCurrentMarker;
-    private String trackingId = null;
-    Firebase user;
+    private String trackingId=null;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference root,user;
     Boolean proceed;
     Button btn_trackAnotherStick;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
-        trackingIdDialog.show(getSupportFragmentManager(), "tracking id dialog");
+        trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
 
         btn_trackAnotherStick = (Button) findViewById(R.id.btn_trackAnotherStick);
 
@@ -66,7 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 btn_trackAnotherStick.setVisibility(View.INVISIBLE);
                 TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
-                trackingIdDialog.show(getSupportFragmentManager(), "tracking id dialog");
+                trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
             }
         });
 
@@ -78,8 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void showLocationMarkerOnMap() {
-        currentLocation = new LatLng(latitude, longitude);
-        mCurrentMarker = mMap.addMarker(new MarkerOptions().position(currentLocation).title("Updated " + ((new Date().getTime() - time) / (1000 * 60)) + " minutes ago."));
+        currentLocation = new LatLng(latitude,longitude);
+        mCurrentMarker = mMap.addMarker(new MarkerOptions().position(currentLocation).title("Updated " + ((new Date().getTime() - time)/(1000*60)) + " minutes ago."));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         Date date = calendar.getTime();
@@ -90,16 +88,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+
     @Override
     public void onDataPass(String data) {
-        trackingId = data;
+      trackingId=data;
     }
+    public void getLocation(){
+        Toast.makeText(this,"got the tracking id"+trackingId,Toast.LENGTH_LONG).show();
 
-    public void getLocation() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        user = firebaseDatabase.getReference(trackingId);
 
+        user.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,Object> map = (HashMap)dataSnapshot.getValue();
+                latitude = (Double)map.get("Latitude");
+                longitude = (Double)map.get("Longitude");
+                time = (Long) map.get("Time");
+                showLocationMarkerOnMap();
+                Toast.makeText(MapsActivity.this,"Hello from jay!",Toast.LENGTH_SHORT);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
-
-
-
