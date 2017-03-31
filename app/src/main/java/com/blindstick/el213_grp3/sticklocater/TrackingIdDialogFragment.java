@@ -6,10 +6,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
+
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +37,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
     }
 
     EditText et_tracingId;
+    int flag=0;
     String trackingId;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root;
@@ -42,7 +48,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle bundle) {
 
         AlertDialog.Builder builder =
-                new AlertDialog.Builder(getActivity());
+                new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.myBackgroundStyle));
         View trackingIdDialogView =
                 getActivity().getLayoutInflater().inflate(
                         R.layout.fragment_tracking_id, null);
@@ -51,6 +57,9 @@ public class TrackingIdDialogFragment extends DialogFragment {
         et_tracingId = (EditText)trackingIdDialogView.findViewById(R.id.et_trackingId);
 
         progressDialog = new SpotsDialog(getContext(), R.style.Custom);
+        progressDialog.setCancelable(false);
+
+
         builder.setTitle("Enter Tracking ID:");
 
         builder.setPositiveButton("Locate",
@@ -61,6 +70,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
                     }
                 }
         );
+
         context=getContext();
         return builder.create();
     }
@@ -81,6 +91,18 @@ public class TrackingIdDialogFragment extends DialogFragment {
                         et_tracingId.setText("");
                     } else {
                         progressDialog.show();
+                        final Runnable progressRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                if(flag==0) {
+                                    ToastOX.Tnull(context, "Please Check Your Network Connection and Try Again Later...",Toast.LENGTH_LONG);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        };
+
+                        Handler pdCanceller = new Handler();
+                        pdCanceller.postDelayed(progressRunnable, 30000);
                         firebaseDatabase = FirebaseDatabase.getInstance();
                         root = firebaseDatabase.getReference();
                         root.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -88,12 +110,14 @@ public class TrackingIdDialogFragment extends DialogFragment {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.hasChild(trackingId)) {
                                     progressDialog.dismiss();
+                                    flag=1;
                                     btn_trackingAnotherStick.setVisibility(View.VISIBLE);
                                     dataPasser.onDataPass(trackingId);
                                     dismiss();
                                 } else {
                                     ToastOX.error(getContext(), "User Not Found");
                                     progressDialog.dismiss();
+                                    flag=1;
                                     et_tracingId.setText("");
                                 }
                             }

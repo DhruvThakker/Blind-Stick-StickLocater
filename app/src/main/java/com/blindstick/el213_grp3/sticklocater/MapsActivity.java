@@ -54,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         progressDialog = new SpotsDialog(this, R.style.Custom2);
+        progressDialog.setCancelable(false);
         TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
         trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
 
