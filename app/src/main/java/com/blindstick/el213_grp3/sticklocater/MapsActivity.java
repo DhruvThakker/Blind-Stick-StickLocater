@@ -104,29 +104,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setTitle() {
         long timeDiff = (new Date().getTime() - time)/(1000*60);
-        String unit = "minutes";
+        String plural = "s";
+        String unit = "minute";
         if(timeDiff>=60) {
             timeDiff = timeDiff/60;
-            unit = "hours";
+            unit = "hour";
             INTERVAL = INTERVAL * 60;
             if(timeDiff>=24) {
                 timeDiff = timeDiff/24;
-                unit = "days";
+                unit = "day";
                 INTERVAL = INTERVAL * 24;
                 if(timeDiff>=30) {
                     long temp = timeDiff;
                     timeDiff = timeDiff/30;
-                    unit = "months";
+                    unit = "month";
                     INTERVAL = INTERVAL * 30;
                     if(temp>=365) {
                         timeDiff = temp/365;
-                        unit = "years";
+                        unit = "year";
                         INTERVAL = INTERVAL * 365;
                     }
                 }
             }
         }
-        mCurrentMarker.setTitle("Updated " + timeDiff + " " + unit + " ago.");
+        if(timeDiff==1) {
+            plural = "";
+        }
+        mCurrentMarker.setTitle("Updated " + timeDiff + " " + unit + plural + " ago.");
     }
 
     @Override
