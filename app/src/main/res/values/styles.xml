@@ -19,4 +19,8 @@
         <item name="DialogSpotColor">@android:color/holo_blue_dark</item>
         <item name="DialogSpotCount">8</item>
     </style>
+    <style name="myBackgroundStyle" parent="@android:style/Theme.Holo.Panel">
+        <item name="android:textStyle">bold</item>
+
+    </style>
 </resources>

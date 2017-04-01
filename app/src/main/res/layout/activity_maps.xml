@@ -16,7 +16,7 @@
         android:layout_marginTop="20dp"
         android:paddingRight="10dp"
         android:id="@+id/btn_trackAnotherStick"
-        android:background="#000000"
+        android:background="#6A1B9A"
         android:alpha="0.6"
         android:visibility="invisible"/>
 
