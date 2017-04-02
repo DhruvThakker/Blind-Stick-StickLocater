@@ -150,29 +150,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onDataPass(String data) {
       trackingId=data;
     }
-    public void getLocation(){
+    public void getLocation() {
         progressDialog.show();
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        user = firebaseDatabase.getReference(trackingId);
+        if (trackingId != null) {
+            user = firebaseDatabase.getReference(trackingId);
 
-        user.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,Object> map = (HashMap)dataSnapshot.getValue();
-                latitude = (Double)map.get("Latitude");
-                longitude = (Double)map.get("Longitude");
-                time = (Long) map.get("Time");
-                progressDialog.dismiss();
-                ToastOX.info(getApplicationContext(), "Locating...");
-                showLocationMarkerOnMap();
-            }
+            user.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, Object> map = (HashMap) dataSnapshot.getValue();
+                    latitude = (Double) map.get("Latitude");
+                    longitude = (Double) map.get("Longitude");
+                    time = (Long) map.get("Time");
+                    progressDialog.dismiss();
+                    ToastOX.info(getApplicationContext(), "Locating...");
+                    showLocationMarkerOnMap();
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
 }

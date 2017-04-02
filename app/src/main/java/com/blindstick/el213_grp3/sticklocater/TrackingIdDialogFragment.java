@@ -41,7 +41,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
 
     EditText et_tracingId;
     int flag = 0;
-    String trackingId;
+    String trackingId="";
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root;
     private AlertDialog progressDialog;
