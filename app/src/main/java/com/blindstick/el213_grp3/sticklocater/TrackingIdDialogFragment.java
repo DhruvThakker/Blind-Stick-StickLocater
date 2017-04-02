@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.onurciner.toastox.ToastOX;
+
 import dmax.dialog.SpotsDialog;
 
 public class TrackingIdDialogFragment extends DialogFragment {
@@ -28,6 +30,7 @@ public class TrackingIdDialogFragment extends DialogFragment {
     public interface OnDataPass {
         public void onDataPass(String data);
     }
+
     OnDataPass dataPasser;
 
     @Override
@@ -37,13 +40,14 @@ public class TrackingIdDialogFragment extends DialogFragment {
     }
 
     EditText et_tracingId;
-    int flag=0;
+    int flag = 0;
     String trackingId;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference root;
     private AlertDialog progressDialog;
     Context context;
     Button btn_trackingAnotherStick;
+
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
 
@@ -54,8 +58,14 @@ public class TrackingIdDialogFragment extends DialogFragment {
                         R.layout.fragment_tracking_id, null);
         builder.setView(trackingIdDialogView);
         setCancelable(false);
-        et_tracingId = (EditText)trackingIdDialogView.findViewById(R.id.et_trackingId);
+        et_tracingId = (EditText) trackingIdDialogView.findViewById(R.id.et_trackingId);
 
+        Uri data = getActivity().getIntent().getData();
+        if (data != null) {
+            String str = data.toString().replaceAll("http://blindstick.el213grp3.sticklocater.com/", "");
+            setTrackindId(str);
+
+        }
         progressDialog = new SpotsDialog(getContext(), R.style.Custom);
         progressDialog.setCancelable(false);
 
@@ -71,9 +81,10 @@ public class TrackingIdDialogFragment extends DialogFragment {
                 }
         );
 
-        context=getContext();
+        context = getContext();
         return builder.create();
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -94,8 +105,8 @@ public class TrackingIdDialogFragment extends DialogFragment {
                         final Runnable progressRunnable = new Runnable() {
                             @Override
                             public void run() {
-                                if(flag==0) {
-                                    ToastOX.Tnull(context, "Please Check Your Network Connection and Try Again Later...",Toast.LENGTH_LONG);
+                                if (flag == 0) {
+                                    ToastOX.Tnull(context, "Please Check Your Network Connection and Try Again Later...", Toast.LENGTH_LONG);
                                     progressDialog.dismiss();
                                 }
                             }
@@ -110,14 +121,14 @@ public class TrackingIdDialogFragment extends DialogFragment {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.hasChild(trackingId)) {
                                     progressDialog.dismiss();
-                                    flag=1;
+                                    flag = 1;
                                     btn_trackingAnotherStick.setVisibility(View.VISIBLE);
                                     dataPasser.onDataPass(trackingId);
                                     dismiss();
                                 } else {
                                     ToastOX.error(getContext(), "User Not Found");
                                     progressDialog.dismiss();
-                                    flag=1;
+                                    flag = 1;
                                     et_tracingId.setText("");
                                 }
                             }
@@ -132,10 +143,15 @@ public class TrackingIdDialogFragment extends DialogFragment {
             });
         }
     }
+
     @Override
     public void onDetach() {
         super.onDetach();
-        ((MapsActivity)getActivity()).getLocation();
+        ((MapsActivity) getActivity()).getLocation();
+    }
+
+    public void setTrackindId(String str) {
+        et_tracingId.setText(str);
     }
 
 }

@@ -1,11 +1,14 @@
 package com.blindstick.el213_grp3.sticklocater;
 
 import android.app.AlertDialog;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,7 +33,6 @@ import java.util.HashMap;
 import dmax.dialog.SpotsDialog;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TrackingIdDialogFragment.OnDataPass {
-
     private GoogleMap mMap;
     private double latitude,longitude;
     private long time;
@@ -49,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -57,7 +61,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressDialog.setCancelable(false);
         TrackingIdDialogFragment trackingIdDialog = new TrackingIdDialogFragment();
         trackingIdDialog.show(getSupportFragmentManager(),"tracking id dialog");
-
+        /*Uri data = getIntent().getData();
+        if(data!=null) {
+            String str = data.toString().replaceAll("http://blindstick.el213grp3.sticklocater.com/", "");
+            Toast.makeText(this, str + "", Toast.LENGTH_SHORT).show();
+            View view = trackingIdDialog.getView();
+            if(view!=null) {
+                trackingIdDialog.setTrackindId(str);
+            }
+        }*/
         btn_trackAnotherStick = (Button) findViewById(R.id.btn_trackAnotherStick);
 
         btn_trackAnotherStick.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +164,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longitude = (Double)map.get("Longitude");
                 time = (Long) map.get("Time");
                 progressDialog.dismiss();
-                //Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
                 ToastOX.info(getApplicationContext(), "Locating...");
                 showLocationMarkerOnMap();
             }
