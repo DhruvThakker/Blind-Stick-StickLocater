@@ -64,8 +64,9 @@ public class TrackingIdDialogFragment extends DialogFragment {
         if (data != null) {
             String str = data.toString().replaceAll("http://blindstick.el213grp3.sticklocater.com/", "");
             setTrackindId(str);
-
+            getActivity().getIntent().setData(null);
         }
+
         progressDialog = new SpotsDialog(getContext(), R.style.Custom);
         progressDialog.setCancelable(false);
 
